@@ -1,21 +1,12 @@
 import torch
-import torch.nn.functional as F
 import os
 from sqapi.helpers import create_parser
 from sqapi.annotate import Annotator
 from sqapi.request import query_filter as qf
-from sqapi.annotate import Annotator
-from sqapi.request import query_filter as qf
-from sqapi.helpers import cli_init, create_parser
 from sqapi.media import SQMediaObject
 from PIL import Image
 from torch.utils.data.dataset import Dataset
 from torchvision import transforms
-import matplotlib.pyplot as plt
-import matplotlib.image as mpimg
-import sys
-import os
-import torch
 from pytorch_lightning import Trainer
 from prediction_model import KelpClassifier
 

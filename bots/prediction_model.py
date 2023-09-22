@@ -29,6 +29,7 @@ class KelpClassifier(LightningModule):
             self.feature_extractor = nn.Sequential(*layers)
             num_target_classes = 2
             self.classifier = nn.Linear(num_filters,  num_target_classes)
+
     
     def forward(self, x):
         if self.backbone_name == 'inception_v3':

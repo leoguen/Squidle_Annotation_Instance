@@ -175,6 +175,7 @@ if __name__ == '__main__':
     text_file = open("bots/API_KEY.txt", "r")
     #read whole file to a string
     api_key = text_file.read()
+    api_token = api_key
     #close file
     text_file.close()
     args.label_map_file = '/home/ubuntu/Documents/IMAS/Code/Squidle/bots/rando_bot_label_map.json'

@@ -39,7 +39,7 @@ class SQDataset(Dataset):
 
 class TorchBOT(Annotator):
 
-    def __init__(self, model_path: str = '/pvol/logs/Eck_cross_validation_1/perc_18/lightning_logs/version_0/checkpoints/epoch=49-step=32550.ckpt', crop_perc: float = DEFAULT_CROP_PERC, 
+    def __init__(self, model_path: str = 'models/Ecklonia/epoch=49-step=32550.ckpt', crop_perc: float = DEFAULT_CROP_PERC, 
                 **kwargs: object) -> object:
         """
         Uses pytorch to run a pytorch model
@@ -48,17 +48,18 @@ class TorchBOT(Annotator):
         :param network: the network to use for the model
         """
 
+        # Instantiate the Trainer with specific settings
+        acc_val = 'cpu'
+        if torch.cuda.is_available(): acc_val = 'gpu'
+
         super().__init__(**kwargs)
         self.model = KelpClassifier.load_from_checkpoint(
             model_path,
             optimizer="AdamW",
             backbone_name='inception_v3',
             no_filters=0,
+            map_location=torch.device(acc_val)
         )
-
-        # Instantiate the Trainer with specific settings
-        acc_val = 'cpu'
-        if torch.cuda.is_available(): acc_val = 'gpu'
         
         self.trainer = Trainer(
             accelerator=acc_val,
@@ -141,7 +142,7 @@ if __name__ == '__main__':
     parser = create_parser(TorchBOT)
 
     # Add some additional custom cli args not related to the model
-    parser.add_argument('--annotation_set_id', help="Process specific annotation_set", type=int, default = 8322)
+    parser.add_argument('--annotation_set_id', help="Process specific annotation_set", type=int, default = 8345) #8322
     parser.add_argument('--user_group_id', help="Process all annotation_sets contained in a specific user_group", type=int)
     parser.add_argument('--affiliation_group_id', help="Process all annotation_sets contained in a specific Affiliation", type=int)
     parser.add_argument('--after_date', help="Process all annotation_sets after a date YYYY-MM-DD", type=str)
@@ -149,9 +150,16 @@ if __name__ == '__main__':
     
     args = parser.parse_args()
     # Set the host, API key, and label map file for the bot
+    #open text file in read mode
+    text_file = open("bots/API_KEY.txt", "r")
+    #read whole file to a string
+    api_key = text_file.read()
+    #close file
+    text_file.close()
+
     args.host = 'https://staging.squidle.org'
-    args.api_key = 'b113e06bfdd260844b3697be5659f9cd19beebe15231bd12fee3a979'
-    args.label_map_file = '/home/ubuntu/Documents/IMAS/Code/Squidle/bots/kelp_bot_label_map.json'
+    args.api_key = api_key
+    args.label_map_file = 'bots/kelp_bot_label_map.json'
 
     bot = TorchBOT(**vars(args))
 

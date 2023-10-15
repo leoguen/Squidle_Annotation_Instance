@@ -1,13 +1,9 @@
 import torch
-import os
 from sqapi.helpers import create_parser
 from sqapi.annotate import Annotator
 from sqapi.request import query_filter as qf
-from sqapi.media import SQMediaObject
 from PIL import Image
-from torch.utils.data.dataset import Dataset
 from torchvision import transforms
-from pytorch_lightning import Trainer
 from prediction_model import KelpClassifier
 from torch.nn import functional as F
 import time
@@ -56,11 +52,9 @@ class TorchBOT(Annotator):
             classifier_code = int(top_class.data[0][0])
             prob = float(top_p.data[0][0])
             
-        toc = time.perf_counter()
         return classifier_code, prob
 
     def get_patch(self, x, y, mediaobj):
-
         # check if data has been downloaded and if not download it
         if not mediaobj.is_processed:
             orig_image = mediaobj.data()
@@ -117,10 +111,10 @@ if __name__ == '__main__':
     parser.add_argument('--user_group_id', help="Process all annotation_sets contained in a specific user_group", type=int)
     parser.add_argument('--affiliation_group_id', help="Process all annotation_sets contained in a specific Affiliation", type=int)
     parser.add_argument('--after_date', help="Process all annotation_sets after a date YYYY-MM-DD", type=str)
-    
-    
-    parser.add_argument('--crop_perc', help="Which crop percentage to use for the image patch as float.", type=float, default=0.16)
-    
+    parser.add_argument('--media_count_max', help="Filter annotation_sets that have less than a specific number of media objects", type=int)
+    parser.add_argument('--crop_perc', help="Which crop percentage to use for the image patch as float.", type=float, default=0.18)
+    parser.add_argument('--label_map_file', help="Path to the label map file.", type=str, default='bots/kelp_bot_label_map.json')
+    parser.add_argument('--host', help="Host to run the bot on.", type=str, default='https://squidle.org')
     args = parser.parse_args()
     # Set the host, API key, and label map file for the bot
     #open text file in read mode
@@ -129,10 +123,7 @@ if __name__ == '__main__':
     api_key = text_file.read()
     #close file
     text_file.close()
-
-    args.host = 'https://squidle.org'
     args.api_key = api_key
-    args.label_map_file = 'bots/kelp_bot_label_map.json'
 
     bot = TorchBOT(**vars(args))
 

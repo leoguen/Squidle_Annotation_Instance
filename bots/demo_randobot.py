@@ -38,12 +38,12 @@ if __name__ == '__main__':
     parser = create_parser(RandoBOT)
 
     # Add some additional custom cli args not related to the model
-    parser.add_argument('--annotation_set_id', help="Process specific annotation_set", type=int, default=8266)
+    parser.add_argument('--annotation_set_id', help="Process specific annotation_set", type=int, default=10741)
     parser.add_argument('--user_group_id', help="Process all annotation_sets contained in a specific user_group", type=int)
     parser.add_argument('--after_date', help="Process all annotation_sets after a date YYYY-MM-DD", type=str)
 
     args = parser.parse_args()
-    args.host = 'https://staging.squidle.org'
+    args.host = 'https://squidle.org'
     # Set the host, API key, and label map file for the bot
     #open text file in read mode
     text_file = open("bots/API_KEY.txt", "r")
